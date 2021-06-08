@@ -2,6 +2,9 @@ package com.mj.aop_part4_chapter01
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.mj.aop_part4_chapter01.adapter.VideoAdapter
 import com.mj.aop_part4_chapter01.dto.VideoDto
 import com.mj.aop_part4_chapter01.service.VideoService
 import retrofit2.Call
@@ -12,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
-
+    private lateinit var videoAdapter: VideoAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +24,13 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, PlayerFragment())
             .commit()
+
+        videoAdapter = VideoAdapter()
+
+        findViewById<RecyclerView>(R.id.mainRecyclerView).apply {
+            adapter = videoAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
 
         getVideoList()
     }
@@ -33,15 +43,17 @@ class MainActivity : AppCompatActivity() {
 
         retrofit.create(VideoService::class.java).also {
             it.listVideos()
-                .enqueue(object:Callback<VideoDto>{
+                .enqueue(object : Callback<VideoDto> {
                     override fun onResponse(call: Call<VideoDto>, response: Response<VideoDto>) {
-                        if(response.isSuccessful.not()) {
+                        if (response.isSuccessful.not()) {
                             return
                         }
 
-                        response.body()?.let {
-
+                        response.body()?.let { videoDto ->
+                            videoAdapter.submitList(videoDto.videos)
                         }
+
+
                     }
 
                     override fun onFailure(call: Call<VideoDto>, t: Throwable) {
