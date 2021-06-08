@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mj.aop_part4_chapter01.adapter.VideoAdapter
 import com.mj.aop_part4_chapter01.dto.VideoDto
+import com.mj.aop_part4_chapter01.model.VideoModel
 import com.mj.aop_part4_chapter01.service.VideoService
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,12 +33,21 @@ class MainActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(context)
         }
 
-        getVideoList()
+        val videoModels = mutableListOf<VideoModel>()
+        videoModels.add(VideoModel("Big Buck Bunny",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            "By Blender Foundation",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
+            "Big Buck Bunny"))
+
+        videoAdapter.submitList(videoModels)
+
+        //getVideoList()
     }
 
     private fun getVideoList() {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://run.mocky.io/")
+            .baseUrl("https://run.mocky.io")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -46,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                 .enqueue(object : Callback<VideoDto> {
                     override fun onResponse(call: Call<VideoDto>, response: Response<VideoDto>) {
                         if (response.isSuccessful.not()) {
+                            println("no")
                             return
                         }
 
@@ -57,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<VideoDto>, t: Throwable) {
-
+                        println("no2")
                     }
 
                 })
