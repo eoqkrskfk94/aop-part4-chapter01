@@ -26,7 +26,11 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragmentContainer, PlayerFragment())
             .commit()
 
-        videoAdapter = VideoAdapter()
+        videoAdapter = VideoAdapter(callback = { url, title ->
+            supportFragmentManager.fragments.find { it is PlayerFragment }?.let {
+                (it as PlayerFragment).play(url, title)
+            }
+        })
 
         findViewById<RecyclerView>(R.id.mainRecyclerView).apply {
             adapter = videoAdapter
@@ -34,15 +38,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         val videoModels = mutableListOf<VideoModel>()
-        videoModels.add(VideoModel("Big Buck Bunny",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-            "By Blender Foundation",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
-            "Big Buck Bunny"))
+//        videoModels.add(VideoModel("Big Buck Bunny",
+//            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+//            "By Blender Foundation",
+//            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
+//            "Big Buck Bunny"))
+//
+//        videoAdapter.submitList(videoModels)
 
-        videoAdapter.submitList(videoModels)
-
-        //getVideoList()
+        getVideoList()
     }
 
     private fun getVideoList() {
